@@ -14,9 +14,10 @@ class Display
   end
 
   def display_board
+    # instead of doing checkboard through nullpiece class, we just do odds and evens here as a background color
     @board.rows.each_index.inject([]) do |board, row_idx|
       board << @board.rows[row_idx].each_index.inject("") do |str, col_idx|
-        x = @board[[row_idx, col_idx]].to_s
+        x = @board[[row_idx, col_idx]].to_s #.colorize( idx % 2 == 0 :white : :black)
         x = x.colorize(:background => :red) if @cursor_pos.cursor_pos == [row_idx, col_idx]
        str << x
       end
