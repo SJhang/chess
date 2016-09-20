@@ -5,12 +5,29 @@ class Display
   def initialize(board)
     @board = board
     @cursor_pos = Cursor.new([0,0], board)
+    @notifications = ""
+  end
+
+  def notifications(message)
+    @notifications = message
+  end
+
+  def clear_notifications
+    @notifcations = ""
   end
 
 
-  def render
-    @board[@cursor_pos.cursor_pos].colorize(:background => :red)
-    #@cursor_pos.get_input
+  def render(message = "")
+    val = nil
+    until val == @cursor_pos.cursor_pos
+      system("clear")
+      puts "#{@notifications}" unless @notifications.empty?
+      puts "#{message}"
+      puts display_board
+      val = @cursor_pos.get_input
+    end
+
+    val
   end
 
   def display_board
@@ -19,20 +36,10 @@ class Display
       board << @board.rows[row_idx].each_index.inject("") do |str, col_idx|
         white_space = row_idx.even? && col_idx.odd? || row_idx.odd? && col_idx.even?
         x = @board[[row_idx, col_idx]].to_s.colorize( :background => (white_space ? :red : :black))
-        x = x.colorize(:background => :blue) if @cursor_pos.cursor_pos == [row_idx, col_idx]
+        x = x.colorize(background: :blue) if @cursor_pos.cursor_pos == [row_idx, col_idx]
        str << x
       end
     end.join("\n")
   end
 
-  def test_render
-    val = nil
-    until val == @cursor_pos.cursor_pos
-      puts display_board
-      val = @cursor_pos.get_input
-      #render
-    end
-
-    val
-  end
 end
