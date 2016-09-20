@@ -1,0 +1,22 @@
+require 'singleton'
+
+class NullPiece
+  include Singleton
+  attr_reader :color
+
+  def initialize
+    @color = :none
+  end
+
+  def to_s
+    "[]".colorize(:blue)
+  end
+
+  def empty?
+    true
+  end
+
+  def moves()
+    []
+  end
+end
