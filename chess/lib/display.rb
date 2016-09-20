@@ -28,6 +28,7 @@ class Display
   def test_render
     val = nil
     until val == @cursor_pos.cursor_pos
+      system("clear")
       puts display_board
       val = @cursor_pos.get_input
       #render

@@ -8,6 +8,10 @@ class NullPiece
     @color = :none
   end
 
+  def dup
+    self.instance
+  end
+
   def to_s
     "     "
   end

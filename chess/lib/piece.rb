@@ -7,21 +7,26 @@ class Pieces
     ObjectSpace.each_object(Class).select { |klass| klass < self }
   end
 
-  def self.create_pieces
+  def self.create_pieces(board)
     list = []
     [:white, :black].each do |color|
       [Pawn, Knight, King, Queen, Rook, Bishop].each do |piece_class|
         piece_class::DEFAULT[color].each do |location|
-          list << piece_class.new(color, location)
+          list << piece_class.new(color, location, board)
         end
       end
     end
     list
   end
 
-  def initialize(color, pos)
+  def initialize(color, pos, board)
     @color = color
     @pos = pos
+    @board = board
+  end
+
+  def dup(board)
+    self.class.new(@color, @pos, board)
   end
 
   def to_s()
@@ -54,11 +59,11 @@ module SlidingPiece
     :horizontal => [[0, 1], [0, -1]],
     :diagonal => [[1, 1], [-1, -1], [-1, 1], [1, -1]]
   }
-  def valid_moves(board)
-    move_dir(board)
+  def valid_moves
+    move_dir
   end
 
-  def move_dir(board, directions)
+  def move_dir(directions)
     move_list = []
 
     directions.each do |direction|
@@ -68,9 +73,9 @@ module SlidingPiece
         row_add, col_add = dir
         flag = true
 
-        while flag && board.in_bounds?([row + row_add, col + col_add])
+        while flag && @board.in_bounds?([row + row_add, col + col_add])
           updating_pos = [row + row_add, col + col_add]
-          case board[updating_pos].color
+          case @board[updating_pos].color
           when self.color
             flag = false
           when self.opponent_color
@@ -93,11 +98,11 @@ end
 module SteppingPiece
   #feed directions in
 
-  def valid_moves(board)
-    move_diffs(board)
+  def valid_moves
+    move_diffs
   end
 
-  def move_diffs(board, directions)
+  def move_diffs(directions)
     move_list = []
     directions.each do |dir|
       row, col = @pos
@@ -105,7 +110,7 @@ module SteppingPiece
 
       updating_pos = [row + row_add, col + col_add]
 
-      if board.in_bounds?(updating_pos) && board[updating_pos].color != self.color
+      if @board.in_bounds?(updating_pos) && @board[updating_pos].color != self.color
         move_list << updating_pos
       end
     end
@@ -118,18 +123,14 @@ class King < Pieces
   include SteppingPiece
 
   DEFAULT = { :black => [[0, 4]], :white => [[7, 4]] }
-
   DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [-1, 1], [1, -1]]
-  def initialize(color, pos)
-    super
-  end
 
   def to_s
     @color == :black ? "  \u2654  " : "  \u265A  "
   end
 
-  def move_diffs(board)
-    super(board, DIRS)
+  def move_diffs
+    super(DIRS)
   end
 end
 
@@ -139,12 +140,8 @@ class Knight < Pieces
   DEFAULT = { :black => [[0, 1], [0, 6]], :white => [[7, 1], [7, 6]] }
   DIRS = [[2,1], [2,-1], [-2,1], [-2,-1], [1,2], [1,-2], [-1,2], [-1,-2]]
 
-  def initialize(color, pos)
-    super
-  end
-
-  def move_diffs(board)
-    super(board, DIRS)
+  def move_diffs
+    super(DIRS)
   end
 
   def to_s
@@ -158,12 +155,8 @@ class Queen < Pieces
 
   DEFAULT = { :black => [[0, 3]], :white => [[7, 3]] }
 
-  def intialize(color, pos)
-    super
-  end
-
-  def move_dir(board)
-    super(board, [:vertical, :horizontal, :diagonal])
+  def move_dir
+    super([:vertical, :horizontal, :diagonal])
   end
 
   def to_s
@@ -176,12 +169,8 @@ class Rook < Pieces
 
   DEFAULT = { :black => [[0, 0], [0, 7]], :white => [[7, 0], [7, 7]] }
 
-  def intialize(color, pos)
-    super
-  end
-
-  def move_dir(board)
-    super(board, [:vertical, :horizontal])
+  def move_dir
+    super([:vertical, :horizontal])
   end
 
   def to_s
@@ -194,12 +183,8 @@ class Bishop < Pieces
 
   DEFAULT = { :black => [[0, 2], [0, 5]], :white => [[7, 2], [7, 5]] }
 
-  def intialize(color, pos)
-    super
-  end
-
-  def move_dir(board)
-    super(board, [:diagonal])
+  def move_dir
+    super([:diagonal])
   end
 
   def to_s
@@ -212,16 +197,16 @@ class Pawn < Pieces
   DEFAULT = {:black => (0..7).map {|pos| [1, pos]}, :white => (0..7).map {|pos| [6, pos]}}
   DIRS = [[2,0], [1,0], [1,1], [1,-1]]
 
-  def initialize(color, pos)
+  def initialize(color, pos, board)
     @first_move = true
     super
   end
 
-  def valid_moves(board)
-    forward_dir(board) + side_attacks(board)
+  def valid_moves
+    forward_dir + side_attacks
   end
 
-  def forward_dir(board)
+  def forward_dir
     move_list = []
     move_limit = (@first_move ? 2 :  1)
     row, col = @pos
@@ -229,7 +214,7 @@ class Pawn < Pieces
     move_limit.times do
       updating_pos = [row + 1, col]
 
-      if board.in_bounds?(updating_pos) && board[updating_pos].color == :none
+      if @board.in_bounds?(updating_pos) && @board[updating_pos].color == :none
         move_list << updating_pos
       else
         break
@@ -239,13 +224,13 @@ class Pawn < Pieces
     move_list
   end
 
-  def side_attacks(board)
+  def side_attacks
     move_list = []
 
     [[1,-1], [1,1]].each do |dir|
       row, col = @pos
       updating_pos = [row + dir.first, col + dir.last]
-      if board.in_bounds?(updating_pos) && board[updating_pos].color == opponent_color
+      if @board.in_bounds?(updating_pos) && @board[updating_pos].color == opponent_color
         move_list << updating_pos
       end
     end

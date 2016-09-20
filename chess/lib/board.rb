@@ -2,13 +2,17 @@ require_relative 'nullpiece'
 require_relative 'piece'
 
 class Board
-  def initialize
-    @grid = Array.new(8) { Array.new(8){ NullPiece.instance }  }
-    load_pieces
+  def initialize(piece_list = nil)
+    @grid = empty_board
+    load_pieces(piece_list)
   end
 
-  def load_pieces
-    piece_list = Pieces.create_pieces
+  def empty_board
+    Array.new(8) { Array.new(8){ NullPiece.instance }  }
+  end
+
+  def load_pieces(piece_list = nil)
+    piece_list ||= Pieces.create_pieces(self)
     piece_list.each do |piece|
       self[piece.pos] = piece
     end
@@ -29,10 +33,10 @@ class Board
   end
 
   def move(start_pos, end_pos)
-
+    byebug
     begin
       raise "You must select a piece" if self[start_pos].is_a?(NullPiece)
-      raise "You cannot move there" unless self[start_pos].valid_moves(self).include?(end_pos)
+      raise "You cannot move there" unless self[start_pos].valid_moves.include?(end_pos)
     rescue => e
       puts "#{e.message}"
       return false
@@ -61,17 +65,33 @@ class Board
 
     opponent_locations = search_board({:color => opponent_color })
     opponent_locations.each do |loc|
-      move_list += self[loc].valid_moves(self)
+      move_list += self[loc].valid_moves
     end
 
 
     move_list.uniq.include?(king_location)
   end
 
-  def dup
-    # duplicate the board and every piece to put them on the board
-    dup_board = @board.dup
+  def checkmate?(color)
+
   end
+
+  def dup
+    piece_list = []
+    dup_board = empty_board
+
+    self.each do |row|
+      row.each do |piece|
+        piece_list << piece.dup(dup_board)
+      end
+    end
+
+    dup_board.load_pieces(piece_list)
+    return dup_board
+
+  end
+
+
 
   private
   def find_king(color)
