@@ -1,10 +1,12 @@
 require_relative 'display'
 require_relative 'board'
+require 'byebug'
 
 class Chess
 
   def initialize
     @board = Board.new
+    @board.load_pieces
     @display = Display.new(@board)
   end
 

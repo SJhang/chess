@@ -4,7 +4,7 @@ require_relative 'piece'
 class Board
   def initialize(piece_list = nil)
     @grid = empty_board
-    load_pieces(piece_list)
+    #make sure the game class loads pieces
   end
 
   def empty_board
@@ -35,21 +35,22 @@ class Board
   def move(start_pos, end_pos)
     begin
       raise "You must select a piece" if self[start_pos].is_a?(NullPiece)
-      raise "You cannot move there" unless self[start_pos].valid_moves.include?(end_pos)
+      raise "You cannot move there" unless self[start_pos].valid_move_check.include?(end_pos)
     rescue => e
       puts "#{e.message}"
       return false
     end
 
-    piece = self[start_pos]
-    self[start_pos] = NullPiece.instance
-    update_move(piece, end_pos)
-    true
+    update_move(start_pos, end_pos)
   end
 
-  def update_move(piece, end_pos)
+  def update_move(start_pos, end_pos)
+    piece = self[start_pos]
+    self[start_pos] = NullPiece.instance
+
     self[end_pos] = piece
     piece.pos = end_pos
+    true
   end
 
   def in_bounds?(cursor_pos)
@@ -66,21 +67,24 @@ class Board
     opponent_locations.each do |loc|
       move_list += self[loc].valid_moves
     end
-    
+
     move_list.uniq.include?(king_location)
   end
 
   def checkmate?(color)
-
+    self.search_board({color: color}).none? do |location|
+      self[location].valid_move_check.empty?
+    end
   end
 
   def dup
     piece_list = []
-    dup_board = empty_board
+    dup_board = Board.new
 
-    self.each do |row|
+    self.rows.each do |row|
       row.each do |piece|
-        piece_list << piece.dup(dup_board)
+        new_piece = piece.dup(dup_board)
+        piece_list << new_piece unless new_piece.nil?
       end
     end
 

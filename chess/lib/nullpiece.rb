@@ -8,8 +8,7 @@ class NullPiece
     @color = :none
   end
 
-  def dup
-    self.instance
+  def dup(board)
   end
 
   def to_s
@@ -21,6 +20,5 @@ class NullPiece
   end
 
   def moves()
-    []
   end
 end

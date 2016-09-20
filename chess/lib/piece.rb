@@ -40,11 +40,11 @@ class Pieces
   end
 
   def valid_move_check
-  #
+
     self.valid_moves.reject do |move_pos|
       dup_board = @board.dup
       start_pos = @pos
-      dup_board.move(start_pos, move_pos)
+      dup_board.update_move(start_pos, move_pos)
       dup_board.in_check?(@color)
     end
   #   # cycle through all of you valid moves that were supered in as reject
@@ -209,7 +209,8 @@ end
 class Pawn < Pieces
 
   DEFAULT = {:black => (0..7).map {|pos| [1, pos]}, :white => (0..7).map {|pos| [6, pos]}}
-  DIRS = [[2,0], [1,0], [1,1], [1,-1]]
+  FORWARD = {black: 1, white: -1 }
+  SIDE = { black: [[1,1], [1,-1]], white: [[-1,1], [-1,-1]] }
 
   def initialize(color, pos, board)
     @first_move = true
@@ -226,7 +227,7 @@ class Pawn < Pieces
     row, col = @pos
 
     move_limit.times do
-      updating_pos = [row + 1, col]
+      updating_pos = [row + FORWARD[@color], col]
 
       if @board.in_bounds?(updating_pos) && @board[updating_pos].color == :none
         move_list << updating_pos
@@ -241,7 +242,7 @@ class Pawn < Pieces
   def side_attacks
     move_list = []
 
-    [[1,-1], [1,1]].each do |dir|
+    SIDE[@color].each do |dir|
       row, col = @pos
       updating_pos = [row + dir.first, col + dir.last]
       if @board.in_bounds?(updating_pos) && @board[updating_pos].color == opponent_color
