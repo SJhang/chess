@@ -15,6 +15,9 @@ class NullPiece
     "     "
   end
 
+  def completed_move
+  end
+
   def empty?
     true
   end

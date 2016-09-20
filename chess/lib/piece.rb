@@ -29,6 +29,9 @@ class Pieces
     self.class.new(@color, @pos, board)
   end
 
+  def completed_move
+  end
+
   def to_s()
   end
 
@@ -215,6 +218,10 @@ class Pawn < Pieces
   def initialize(color, pos, board)
     @first_move = true
     super
+  end
+
+  def completed_move
+    @first_move = false
   end
 
   def valid_moves

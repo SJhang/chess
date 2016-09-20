@@ -9,11 +9,11 @@ class Display
   end
 
   def notifications(message)
-    @notifications = message
+    @notifications += "#{message}\n"
   end
 
   def clear_notifications
-    @notifcations = ""
+    @notifications = ""
   end
 
 

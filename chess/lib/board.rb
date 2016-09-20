@@ -50,6 +50,7 @@ class Board
 
     self[end_pos] = piece
     piece.pos = end_pos
+    piece.completed_move
     true
   end
 
@@ -72,7 +73,7 @@ class Board
   end
 
   def checkmate?(color)
-    search_board({color: color}).none? do |location|
+    search_board({color: color}).all? do |location|
       self[location].valid_move_check.empty?
     end
   end
@@ -98,7 +99,7 @@ class Board
   def find_king(color)
     search_board( {class: King, color: color} ).first
   end
-  
+
   def search_board(options = {})
     list = []
     rows.each_index do |row_idx|
