@@ -9,7 +9,7 @@ class NullPiece
   end
 
   def to_s
-    "[]".colorize(:blue)
+    "     "
   end
 
   def empty?

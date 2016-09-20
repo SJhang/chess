@@ -6,6 +6,13 @@ class Board
     @grid = Array.new(8) { Array.new(8){ NullPiece.instance }  }
   end
 
+  def load_pieces
+    piece_list = Pieces.create_pieces
+    piece_list.each do |piece|
+      self[piece.pos] = piece
+    end
+  end
+
   def [](pos)
     row, col = pos
     @grid[row][col]

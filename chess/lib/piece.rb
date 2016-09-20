@@ -126,7 +126,7 @@ class King < Pieces
   end
 
   def to_s
-    @color == :black ? "/u2654" : "/u265A"
+    @color == :black ? "  \u2654  " : "  \u265A  "
   end
 
   def move_diffs(board)
@@ -149,7 +149,7 @@ class Knight < Pieces
   end
 
   def to_s
-    @color ==  :black ? "\u2658" : "\u265E"
+    @color ==  :black ? "  \u2658  " : "  \u265E  "
   end
 end
 
@@ -168,7 +168,7 @@ class Queen < Pieces
   end
 
   def to_s
-    @color == :black ? "\u2655" : "\u265B"
+    @color == :black ? "  \u2655  " : "  \u265B  "
   end
 end
 
@@ -186,7 +186,7 @@ class Rook < Pieces
   end
 
   def to_s
-    @color == :black ? "\u2656" : "\u265C"
+    @color == :black ? "  \u2656  " : "  \u265C  "
   end
 end
 
@@ -204,7 +204,7 @@ class Bishop < Pieces
   end
 
   def to_s
-    @color == :black ? "\u2657" : "\u265D"
+    @color == :black ? "  \u2657  " : "  \u265D  "
   end
 end
 
@@ -255,7 +255,7 @@ class Pawn < Pieces
   end
 
   def to_s
-    @color == :black ? "\u2659" : "\u265F"
+    @color == :black ? "  \u2659  " : "  \u265F  "
   end
 
 end
