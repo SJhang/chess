@@ -12,7 +12,7 @@ class NullPiece
   end
 
   def to_s
-    "     "
+    "   "
   end
 
   def completed_move

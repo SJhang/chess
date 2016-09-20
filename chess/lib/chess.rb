@@ -60,9 +60,8 @@ class Chess
       switch_players!
       @display.clear_notifications
     end
-
-      display_winner
-
+    
+    display_winner
   end
 
   def display_winner
