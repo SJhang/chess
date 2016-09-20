@@ -39,8 +39,22 @@ class Pieces
   def symbol()
   end
 
-  # def valid_moves(board)
-  # end
+  def valid_move_check
+  #
+    self.valid_moves.reject do |move_pos|
+      dup_board = @board.dup
+      start_pos = @pos
+      dup_board.move(start_pos, move_pos)
+      dup_board.in_check?(@color)
+    end
+  #   # cycle through all of you valid moves that were supered in as reject
+  #     # duplicate the @board
+  #     # take the piece at your current location piece = dup_board[@pos]
+  #     # move to valid move location
+  #     # board in check
+  #   #end
+  #
+  end
 
   def opponent_color
     @color == :white ? :black : :white

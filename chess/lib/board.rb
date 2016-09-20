@@ -33,7 +33,6 @@ class Board
   end
 
   def move(start_pos, end_pos)
-    byebug
     begin
       raise "You must select a piece" if self[start_pos].is_a?(NullPiece)
       raise "You cannot move there" unless self[start_pos].valid_moves.include?(end_pos)
@@ -67,8 +66,7 @@ class Board
     opponent_locations.each do |loc|
       move_list += self[loc].valid_moves
     end
-
-
+    
     move_list.uniq.include?(king_location)
   end
 
