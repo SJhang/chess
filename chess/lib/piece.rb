@@ -1,5 +1,6 @@
 class Pieces
-  attr_reader :color, :pos
+  attr_reader :color
+  attr_accessor :pos
 
   def self.descendants
     #taken from stackoverflow
@@ -33,8 +34,8 @@ class Pieces
   def symbol()
   end
 
-  def valid_moves(board)
-  end
+  # def valid_moves(board)
+  # end
 
   def opponent_color
     @color == :white ? :black : :white
@@ -55,7 +56,6 @@ module SlidingPiece
   }
   def valid_moves(board)
     move_dir(board)
-    super
   end
 
   def move_dir(board, directions)
@@ -95,7 +95,6 @@ module SteppingPiece
 
   def valid_moves(board)
     move_diffs(board)
-    super
   end
 
   def move_diffs(board, directions)
@@ -182,7 +181,7 @@ class Rook < Pieces
   end
 
   def move_dir(board)
-    super(boad, [:vertical, :horizontal])
+    super(board, [:vertical, :horizontal])
   end
 
   def to_s
@@ -220,7 +219,6 @@ class Pawn < Pieces
 
   def valid_moves(board)
     forward_dir(board) + side_attacks(board)
-    super
   end
 
   def forward_dir(board)
@@ -247,7 +245,7 @@ class Pawn < Pieces
     [[1,-1], [1,1]].each do |dir|
       row, col = @pos
       updating_pos = [row + dir.first, col + dir.last]
-      if board[updating_pos].color == opponent_color
+      if board.in_bounds?(updating_pos) && board[updating_pos].color == opponent_color
         move_list << updating_pos
       end
     end

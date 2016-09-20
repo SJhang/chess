@@ -30,8 +30,9 @@ class Display
     until val == @cursor_pos.cursor_pos
       puts display_board
       val = @cursor_pos.get_input
-      puts "#{val}"
       #render
     end
+
+    val
   end
 end
