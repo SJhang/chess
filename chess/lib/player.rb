@@ -1,5 +1,3 @@
-
-
 class Player
 
   attr_reader :color

@@ -1,5 +1,5 @@
-require_relative 'nullpiece'
-require_relative 'piece'
+require_relative './pieces/nullpiece'
+require_relative './pieces/piece'
 
 class Board
   def initialize(piece_list = nil)
